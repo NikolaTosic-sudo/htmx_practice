@@ -49,7 +49,7 @@
 {{ end }}
 
 {{ block "display" . }}
-    <div id="contacts" style="display: flex; flex-direction: column;">
+    <div id="contacts" style="display: flex; flex-direction: column; gap: 12px;">
       {{ range .Contacts }}
           {{ template "contact" . }}
       {{ end }}
@@ -57,7 +57,7 @@
 {{ end }}
 
 {{ block "contact" . }}
-    <div class="contact" id="contact-{{ .Id }}" style="display: flex;">
+    <div style="display: flex; align-items: center;">
       <div 
         hx-indicator="#ci-{{ .Id }}"
         style="width: 1rem; cursor: pointer;"
@@ -67,12 +67,16 @@
       >
         <img src="/images/delete.svg" alt="delete" style="width: 1rem" />
       </div>
-      Name: <span>{{ .Name }}</span>
-      Email: <span>{{ .Email }}</span>
+      <a href="contacts/{{ .Id }}">
+        <div class="contact" id="contact-{{ .Id }}" style="padding: 12px; background: #f7f7f7">
+          Name: <span>{{ .Name }}</span>
+          Email: <span>{{ .Email }}</span>
 
-      <div id="ci-{{ .Id }}" class="htmx-indicator">
-        <img src="/images/bars.svg" alt="loading" style="width: 1rem" />
-      </div>
+          <div id="ci-{{ .Id }}" class="htmx-indicator">
+            <img src="/images/bars.svg" alt="loading" style="width: 1rem" />
+          </div>
+        </div>
+      </a>
     </div>
 {{ end }}
 

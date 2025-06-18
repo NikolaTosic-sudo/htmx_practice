@@ -4,8 +4,6 @@ import (
 	"html/template"
 	"io"
 	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -75,6 +73,7 @@ func newData() Data {
 		Contacts: []Contact{
 			newContact("John", "jd@gmail.com"),
 			newContact("Lane", "ld@gmail.com"),
+			newContact("Dane", "dd@gmail.com"),
 		},
 	}
 }
@@ -119,43 +118,11 @@ func main() {
 
 	e.GET("/blocks", BlocksPage)
 
-	e.POST("/contacts", func(c echo.Context) error {
-		name := c.FormValue("name")
-		email := c.FormValue("email")
+	e.POST("/contacts", AddNewContact(&page))
 
-		if page.Data.hasEmail(email) {
-			formData := newFormData()
-			formData.Values["name"] = name
-			formData.Values["email"] = email
-			formData.Errors["email"] = "Email already exists"
+	e.DELETE("/contacts/:id", DeleteContact(&page))
 
-			return c.Render(http.StatusUnprocessableEntity, "form", formData)
-		}
+	//TODO: add a e.PATCH for a partial update
 
-		contact := newContact(name, email)
-		page.Data.Contacts = append(page.Data.Contacts, contact)
-
-		c.Render(http.StatusOK, "form", newFormData())
-		return c.Render(http.StatusOK, "oob-contact", contact)
-	})
-
-	e.DELETE("/contacts/:id", func(c echo.Context) error {
-		time.Sleep(3 * time.Second)
-		idStr := c.Param("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			return c.String(http.StatusBadRequest, "Invalid id")
-		}
-
-		index := page.Data.indexOf(id)
-		if index == -1 {
-			return c.String(http.StatusNotFound, "Contact not found")
-		}
-
-		page.Data.Contacts = append(page.Data.Contacts[:index], page.Data.Contacts[index+1:]...)
-
-		return c.NoContent(http.StatusOK)
-	})
-
-	e.Logger.Fatal(e.Start(":42069"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
