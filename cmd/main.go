@@ -68,6 +68,16 @@ func (d Data) hasEmail(email string) bool {
 	return false
 }
 
+func (d *Data) updateContact(id int, name string, email string) {
+	for i := range d.Contacts {
+		if d.Contacts[i].Id == id {
+			d.Contacts[i].Name = name
+			d.Contacts[i].Email = email
+			return
+		}
+	}
+}
+
 func newData() Data {
 	return Data{
 		Contacts: []Contact{
@@ -105,6 +115,7 @@ func newPage() Page {
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	page := newPage()
 	e.Renderer = newTemplate()
@@ -118,11 +129,13 @@ func main() {
 
 	e.GET("/blocks", BlocksPage)
 
-	e.POST("/contacts", AddNewContact(&page))
+	e.GET("/contact/edit/:id", page.GetEditContact())
 
-	e.DELETE("/contacts/:id", DeleteContact(&page))
+	e.POST("/contacts", page.AddNewContact())
 
-	//TODO: add a e.PATCH for a partial update
+	e.DELETE("/contacts/:id", page.DeleteContact())
+
+	e.PUT("/contact/update/:id", page.UpdateContact())
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

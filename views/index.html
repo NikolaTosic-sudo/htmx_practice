@@ -57,31 +57,68 @@
 {{ end }}
 
 {{ block "contact" . }}
-    <div style="display: flex; align-items: center;">
-      <div 
-        hx-indicator="#ci-{{ .Id }}"
-        style="width: 1rem; cursor: pointer;"
-        hx-delete="/contacts/{{ .Id }}"
-        hx-swap="outerHTML swap:500ms"
-        hx-target="#contact-{{ .Id }}"
-      >
-        <img src="/images/delete.svg" alt="delete" style="width: 1rem" />
-      </div>
-      <a href="contacts/{{ .Id }}">
-        <div class="contact" id="contact-{{ .Id }}" style="padding: 12px; background: #f7f7f7">
-          Name: <span>{{ .Name }}</span>
-          Email: <span>{{ .Email }}</span>
-
-          <div id="ci-{{ .Id }}" class="htmx-indicator">
-            <img src="/images/bars.svg" alt="loading" style="width: 1rem" />
-          </div>
-        </div>
-      </a>
+    <div id="contact-{{ .Id }}" style="display: flex; align-items: center;">
+      {{ template "contact-body" . }}
     </div>
+{{ end }}
+
+{{ block "contact-body" .}}
+    <div 
+      hx-indicator="#ci-{{ .Id }}"
+      style="width: 1rem; cursor: pointer;"
+      hx-delete="/contacts/{{ .Id }}"
+      hx-swap="outerHTML swap:500ms"
+      hx-target="#contact-{{ .Id }}"
+    >
+      <img src="/images/delete.svg" alt="delete" style="width: 1rem" />
+    </div>
+    <a href="contacts/{{ .Id }}">
+      <div class="contact" style="padding: 12px; background: #f7f7f7">
+        Name: <span>{{ .Name }}</span>
+        Email: <span>{{ .Email }}</span>
+
+        <div id="ci-{{ .Id }}" class="htmx-indicator">
+          <img src="/images/bars.svg" alt="loading" style="width: 1rem" />
+        </div>
+      </div>
+    </a>
+    {{ template "button-edit" . }}
 {{ end }}
 
 {{ block "oob-contact" . }}
     <div id="contacts" hx-swap-oob="afterbegin">
       {{ template "contact" . }}
     </div>
+{{ end }}
+
+{{ block "oob-update-contact" . }}
+    <div id="contact-{{ .Id }}" hx-swap-oob="#contact-{{ .Id }}">
+      {{ template "contact-body" . }}
+    </div>
+{{ end }}
+
+{{ block "edit-contact" . }}
+    <form id="edit-contact-{{ .Id }}" hx-put="/contact/update/{{ .Id }}?email={{ .Email }}" hx-swap="outerHTML">
+      <input
+        {{ if .Name }} value="{{ .Name }}" {{ end }}
+        type="text"
+        name="update-name"
+      />
+      <button type="submit">Update contact</button>
+    </form>
+{{ end }}
+
+{{ block "button-edit" . }}
+      <div 
+        id="edit-{{ .Id }}"
+        hx-swap="outerHTML"
+        hx-get="/contact/edit/{{ .Id }}"
+        style="cursor: pointer;"
+      >
+        <img src="/images/edit.svg" alt="edit" style="width: 1rem" />
+      </div>
+{{ end }}
+
+{{ block "test-block" . }}
+    <div>Test block</div>
 {{ end }}
