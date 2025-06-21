@@ -36,7 +36,7 @@ func (d Data) hasEmail(email string) bool {
 	return false
 }
 
-func (d *Data) updateContact(id int, name string, email string) {
+func (d *Data) updateContact(id int, name, email string) {
 	for i := range d.Contacts {
 		if d.Contacts[i].Id == id {
 			d.Contacts[i].Name = name
