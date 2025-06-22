@@ -39,9 +39,10 @@ func (page *Page) DeleteContact() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "Invalid id")
 		}
 
-		index := page.Data.indexOf(id)
-		if index == -1 {
-			return c.String(http.StatusNotFound, "Contact not found")
+		index, err := page.Data.indexOf(id)
+
+		if err != nil {
+			return c.String(http.StatusNotFound, err.Error())
 		}
 
 		page.Data.Contacts = append(page.Data.Contacts[:index], page.Data.Contacts[index+1:]...)
@@ -61,10 +62,10 @@ func (page *Page) UpdateContact() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "Invalid Id")
 		}
 
-		index := page.Data.indexOf(id)
+		index, err := page.Data.indexOf(id)
 
-		if index == -1 {
-			return c.String(http.StatusNotFound, "Contact not found")
+		if err != nil {
+			return c.String(http.StatusNotFound, err.Error())
 		}
 
 		page.Data.updateContact(id, name, email)
@@ -85,10 +86,10 @@ func (page *Page) GetEditContact() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "Invalid id")
 		}
 
-		index := page.Data.indexOf(id)
+		index, err := page.Data.indexOf(id)
 
-		if index == -1 {
-			return c.String(http.StatusNotFound, "Contact not found")
+		if err != nil {
+			return c.String(http.StatusNotFound, err.Error())
 		}
 
 		contact := page.Data.Contacts[index]

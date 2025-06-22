@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"html/template"
 	"io"
 
@@ -18,13 +19,13 @@ func newContact(name, email string) Contact {
 	}
 }
 
-func (d *Data) indexOf(id int) int {
+func (d *Data) indexOf(id int) (int, error) {
 	for i, contact := range d.Contacts {
 		if contact.Id == id {
-			return i
+			return i, nil
 		}
 	}
-	return -1
+	return 0, errors.New("Contact not found")
 }
 
 func (d Data) hasEmail(email string) bool {
