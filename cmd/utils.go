@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"html/template"
 	"io"
+	"os"
 
 	"github.com/labstack/echo/v4"
 )
@@ -47,14 +49,35 @@ func (d *Data) updateContact(id int, name, email string) {
 	}
 }
 
-func newData() Data {
-	return Data{
-		Contacts: []Contact{
-			newContact("John", "jd@gmail.com"),
-			newContact("Lane", "ld@gmail.com"),
-			newContact("Dane", "dd@gmail.com"),
-		},
+func loadContactsFromJSON(path string) ([]Contact, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
 	}
+	defer file.Close()
+
+	var contacts []Contact
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&contacts); err != nil {
+		return nil, err
+	}
+	return contacts, nil
+}
+
+func newData() (Data, error) {
+	contacts, err := loadContactsFromJSON("data/contacts.json")
+
+	if err != nil {
+		return Data{}, errors.New("could not read from the file")
+	}
+
+	var newContacts []Contact
+
+	newContacts = append(newContacts, contacts...)
+
+	return Data{
+		Contacts: newContacts,
+	}, nil
 }
 
 func newTemplate() *Templates {
@@ -63,7 +86,7 @@ func newTemplate() *Templates {
 	}
 }
 
-func (t *Templates) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+func (t *Templates) Render(w io.Writer, name string, data any, c echo.Context) error {
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
@@ -75,8 +98,11 @@ func newFormData() FormData {
 }
 
 func newPage() Page {
+
+	data, _ := newData()
+
 	return Page{
-		Data: newData(),
+		Data: data,
 		Form: newFormData(),
 	}
 }

@@ -11,9 +11,9 @@ type Count struct {
 }
 
 type Contact struct {
-	Name  string
-	Email string
-	Id    int
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Id    int    `json:"id"`
 }
 
 type Contacts = []Contact
