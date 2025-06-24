@@ -13,6 +13,15 @@ func (page *Page) AddNewContact() echo.HandlerFunc {
 		name := c.FormValue("name")
 		email := c.FormValue("email")
 
+		if isEmpty, errArg, err := badForm(name, email); isEmpty {
+			formData := newFormData()
+			formData.Values["name"] = name
+			formData.Values["email"] = email
+			formData.Errors[errArg] = err
+
+			return c.Render(http.StatusUnprocessableEntity, "form", formData)
+		}
+
 		if page.Data.hasEmail(email) {
 			formData := newFormData()
 			formData.Values["name"] = name

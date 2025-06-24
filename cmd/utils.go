@@ -39,6 +39,15 @@ func (d Data) hasEmail(email string) bool {
 	return false
 }
 
+func badForm(name, email string) (bool, string, string) {
+	if email == "" {
+		return true, "email", "Email cannot be empty"
+	} else if name == "" {
+		return true, "name", "Name cannot be empty"
+	}
+	return false, "", ""
+}
+
 func (d *Data) updateContact(id int, name, email string) {
 	for i := range d.Contacts {
 		if d.Contacts[i].Id == id {

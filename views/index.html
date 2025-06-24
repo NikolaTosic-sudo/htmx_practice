@@ -7,11 +7,14 @@
     <link rel="stylesheet" href="/css/index.css">
     <title>Document</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
 
   </head>
   <body>
-    {{ template "form" .Form }}
+    <div class="flex">
+      {{ template "form" .Form }}
+    </div>
     <hr />
     {{ template "display" .Data }}
     <script>
@@ -43,6 +46,9 @@
 
     {{ if .Errors.email }}
       <div style="color: red">{{ .Errors.email }}</div>
+    {{ end }}
+    {{ if .Errors.name }}
+      <div style="color: red">{{ .Errors.name }}</div>
     {{ end }}
     <button type="submit">Create Contact</button>
   </form>
